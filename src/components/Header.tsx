@@ -13,7 +13,7 @@ import {
   Share2,
   Calendar
 } from 'lucide-react';
-import { BREAKING_TICKER_ITEMS, PRAYER_TIMES_LIST } from '../data/mockNews';
+import { PRAYER_TIMES_LIST } from '../data/mockNews';
 
 interface HeaderProps {
   fontSizeScale: number;
@@ -29,7 +29,7 @@ interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onSearchSubmit: (e: React.FormEvent) => void;
-  onGoHome: () => void;
+  onGoHome: () => void;   newsHeadlines: string[];
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
   searchQuery,
   setSearchQuery,
   onSearchSubmit,
-  onGoHome,
+  onGoHome,   newsHeadlines,
 }) => {
   const [tickerIndex, setTickerIndex] = useState(0);
   const [isTickerPaused, setIsTickerPaused] = useState(false);
@@ -55,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
   useEffect(() => {
     if (isTickerPaused) return;
     const interval = setInterval(() => {
-      setTickerIndex((prev) => (prev + 1) % BREAKING_TICKER_ITEMS.length);
+      setTickerIndex((prev) => (prev + 1) % Math.max(newsHeadlines.length, 1));
     }, 6000);
     return () => clearInterval(interval);
   }, [isTickerPaused]);
@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center flex-wrap gap-4 sm:gap-6">
             <div className="flex items-center gap-1.5 font-medium text-slate-700">
               <Calendar className="w-3.5 h-3.5 text-slate-500" />
-              <span>শনিবার, ২৮ সেপ্টেম্বর ২০২৪ • ঢাকা, বাংলাদেশ</span>
+              <span>{new Date().toLocaleDateString('bn-BD', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} • ঢাকা, বাংলাদেশ</span>
             </div>
 
             <button
@@ -172,24 +172,24 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Red Badge */}
             <div className="flex items-center gap-1 bg-[#dc2626] text-white px-2.5 py-0.5 rounded-full font-bold shrink-0 text-[11px] shadow-xs">
               <span className="w-2 h-2 rounded-full bg-yellow-300 animate-ping" />
-              <span>জরুরি সংবাদ</span>
+              <span>সাম্প্রতিক সংবাদ</span>
             </div>
 
             {/* Ticker Content */}
             <div className="flex-1 truncate font-medium text-slate-800">
               <span className="inline-block transition-opacity duration-300">
-                {BREAKING_TICKER_ITEMS[tickerIndex]}
+                {newsHeadlines[tickerIndex] || 'এখনো কোনো সংবাদ প্রকাশিত হয়নি'}
               </span>
             </div>
           </div>
 
           {/* Time & Controls */}
           <div className="flex items-center gap-2 shrink-0 text-slate-500 text-[11px]">
-            <span className="hidden sm:inline">⏱️ ৫ মিনিট আগে</span>
+            
             <div className="flex items-center gap-0.5">
               <button
                 type="button"
-                onClick={() => setTickerIndex((prev) => (prev - 1 + BREAKING_TICKER_ITEMS.length) % BREAKING_TICKER_ITEMS.length)}
+                onClick={() => setTickerIndex((prev) => (prev - 1 + Math.max(newsHeadlines.length, 1)) % Math.max(newsHeadlines.length, 1))}
                 className="p-1 hover:bg-red-100 rounded text-slate-600"
                 title="পূর্ববর্তী খবর"
               >
@@ -197,7 +197,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
               <button
                 type="button"
-                onClick={() => setTickerIndex((prev) => (prev + 1) % BREAKING_TICKER_ITEMS.length)}
+                onClick={() => setTickerIndex((prev) => (prev + 1) % Math.max(newsHeadlines.length, 1))}
                 className="p-1 hover:bg-red-100 rounded text-slate-600"
                 title="পরবর্তী খবর"
               >
