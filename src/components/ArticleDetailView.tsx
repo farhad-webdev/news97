@@ -93,7 +93,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+    <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 sm:py-8">
       {/* Back to Home Button & Breadcrumbs */}
       <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-slate-200">
         <button
