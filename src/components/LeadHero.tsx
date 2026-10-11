@@ -23,7 +23,7 @@ export const LeadHero: React.FC<LeadHeroProps> = ({
         <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5">
           <span className="bg-[#dc2626] text-white text-[11px] font-bold px-2.5 py-0.5 rounded shadow-xs flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            ব্রেকিং নিউজ
+            সর্বশেষ সংবাদ
           </span>
           <span className="bg-slate-900/85 backdrop-blur-xs text-white text-[11px] font-medium px-2 py-0.5 rounded shadow-xs">
             {article.category}
