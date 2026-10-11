@@ -1,0 +1,8 @@
+{
+  "name": "দেশবার্তা | Deshbarta - সত্য ও বস্তুনিষ্ঠ সংবাদ",
+  "description": "বাংলাদেশের শীর্ষস্থানীয় ডিজিটাল সংবাদ পোর্টাল দেশবার্তা। রাজনীতি, অর্থনীতি, অপরাধ, স্বাস্থ্য এবং সমসাময়িক জাতীয় খবরের বিশ্বস্ত মাধ্যম।",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
