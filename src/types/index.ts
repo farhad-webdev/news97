@@ -22,6 +22,7 @@ export interface Article {
   mostReadRank?: number;
   readTime: string;
   audioDuration?: string;
+  sourceUrl?: string;
 }
 
 export interface Comment {
