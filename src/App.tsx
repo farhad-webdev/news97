@@ -242,7 +242,7 @@ export default function App() {
       style={{ fontSize: `${fontSizeScale * 100}%` }}
     >
       {/* 1. Complete Header */}
-      <Header
+      <Header newsHeadlines={articles.slice(0, 10).map((article) => article.title)}
         fontSizeScale={fontSizeScale}
         setFontSizeScale={setFontSizeScale}
         savedArticlesCount={savedArticleIds.length}
