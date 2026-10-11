@@ -14,7 +14,7 @@ import { WeatherModal } from './components/WeatherModal';
 import { PrayerTimesModal } from './components/PrayerTimesModal';
 import { VideoSection } from './components/VideoSection';
 import { NewsAdmin } from './components/NewsAdmin';
-import { INITIAL_ARTICLES, INITIAL_POLL, INITIAL_COMMENTS } from './data/mockNews';
+import { INITIAL_POLL, INITIAL_COMMENTS } from './data/mockNews';
 import { Article, Poll, Comment } from './types';
 import { isSupabaseConfigured, loadPublishedNews, PublishedNewsRow } from './lib/supabase';
 
@@ -39,10 +39,10 @@ function publishedRowToArticle(row: PublishedNewsRow): Article {
     title: row.title,
     excerpt: row.excerpt,
     content: [row.excerpt || 'এই সংবাদটি মূল সংবাদমাধ্যমের ওয়েবসাইটে পড়ুন।'],
-    image: row.image_url || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
+    image: row.image_url || '',
     author: row.source,
     publishedAt: row.published_at ? new Date(row.published_at).toLocaleDateString('bn-BD') : 'সাম্প্রতিক',
-    timeAgo: 'দেশবার্তা ডেস্ক',
+    timeAgo: 'সাম্প্রতিক',
     commentsCount: 0,
     tags: [row.source],
     readTime: 'মূল সংবাদ পড়ুন',
@@ -51,7 +51,7 @@ function publishedRowToArticle(row: PublishedNewsRow): Article {
 }
 
 export default function App() {
-  const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [publishedNewsError, setPublishedNewsError] = useState('');
   const [isAdminOpen, setIsAdminOpen] = useState(window.location.hash === '#admin');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
@@ -76,7 +76,7 @@ export default function App() {
     try {
       const rows = await loadPublishedNews();
       const publishedArticles = rows.map(publishedRowToArticle);
-      setArticles([...INITIAL_ARTICLES, ...publishedArticles]);
+      setArticles(publishedArticles);
       setPublishedNewsError('');
     } catch (error) {
       setPublishedNewsError('নতুন প্রকাশিত সংবাদ এখন লোড করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।');
@@ -231,9 +231,9 @@ export default function App() {
     });
   };
 
-  const leadArticle = articles.find((a) => a.isLead) || articles[0];
-  const trendingArticles = articles.filter((a) => a.isTrending);
-  const gridArticles = getFilteredArticles().filter((a) => a.id !== leadArticle.id);
+  const leadArticle = articles[0];
+  const trendingArticles = articles.slice(1, 4);
+  const gridArticles = getFilteredArticles().filter((a) => !leadArticle || a.id !== leadArticle.id);
   const savedArticles = articles.filter((a) => savedArticleIds.includes(a.id));
 
   return (
@@ -324,7 +324,7 @@ export default function App() {
             )}
 
             {/* Top Section: Lead Story (Hero) & Trending Today Sidebar */}
-            {!searchQuery && activeCategory === 'all' && (
+            {!searchQuery && activeCategory === 'all' && leadArticle && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 {/* Left: Lead Story (approx 65% width) */}
                 <div className="lg:col-span-8 flex">
