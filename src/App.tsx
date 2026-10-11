@@ -13,11 +13,47 @@ import { SavedArticlesDrawer } from './components/SavedArticlesDrawer';
 import { WeatherModal } from './components/WeatherModal';
 import { PrayerTimesModal } from './components/PrayerTimesModal';
 import { VideoSection } from './components/VideoSection';
+import { NewsAdmin } from './components/NewsAdmin';
 import { INITIAL_ARTICLES, INITIAL_POLL, INITIAL_COMMENTS } from './data/mockNews';
 import { Article, Poll, Comment } from './types';
+import { isSupabaseConfigured, loadPublishedNews, PublishedNewsRow } from './lib/supabase';
+
+const categoryDetails: Record<string, { name: string; color: string }> = {
+  politics: { name: 'রাজনীতি', color: '#dc2626' },
+  economy: { name: 'অর্থনীতি', color: '#0284c7' },
+  national: { name: 'সারাদেশ', color: '#059669' },
+  health: { name: 'স্বাস্থ্য', color: '#16a34a' },
+  crime: { name: 'অপরাধ', color: '#e11d48' },
+  international: { name: 'আন্তর্জাতিক', color: '#7c3aed' },
+  sports: { name: 'খেলাধুলা', color: '#ea580c' },
+  technology: { name: 'প্রযুক্তি', color: '#0891b2' },
+};
+
+function publishedRowToArticle(row: PublishedNewsRow): Article {
+  const category = categoryDetails[row.category_slug] ?? categoryDetails.international;
+  return {
+    id: `published-${row.id}`,
+    category: category.name,
+    categorySlug: row.category_slug,
+    categoryColor: category.color,
+    title: row.title,
+    excerpt: row.excerpt,
+    content: [row.excerpt || 'এই সংবাদটি মূল সংবাদমাধ্যমের ওয়েবসাইটে পড়ুন।'],
+    image: row.image_url || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
+    author: row.source,
+    publishedAt: row.published_at ? new Date(row.published_at).toLocaleDateString('bn-BD') : 'সাম্প্রতিক',
+    timeAgo: 'দেশবার্তা ডেস্ক',
+    commentsCount: 0,
+    tags: [row.source],
+    readTime: 'মূল সংবাদ পড়ুন',
+    sourceUrl: row.source_url,
+  };
+}
 
 export default function App() {
   const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
+  const [publishedNewsError, setPublishedNewsError] = useState('');
+  const [isAdminOpen, setIsAdminOpen] = useState(window.location.hash === '#admin');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [fontSizeScale, setFontSizeScale] = useState<number>(1);
@@ -34,6 +70,23 @@ export default function App() {
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [aiInitialPrompt, setAiInitialPrompt] = useState<string | undefined>();
   const [isPlayingAudioBulletin, setIsPlayingAudioBulletin] = useState(false);
+
+  const refreshPublishedNews = async () => {
+    if (!isSupabaseConfigured()) return;
+    try {
+      const rows = await loadPublishedNews();
+      const publishedArticles = rows.map(publishedRowToArticle);
+      setArticles([...INITIAL_ARTICLES, ...publishedArticles]);
+      setPublishedNewsError('');
+    } catch (error) {
+      setPublishedNewsError('নতুন প্রকাশিত সংবাদ এখন লোড করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।');
+      console.error('Could not load published news:', error);
+    }
+  };
+
+  useEffect(() => {
+    void refreshPublishedNews();
+  }, []);
 
   // Load bookmarks from localStorage on mount
   useEffect(() => {
@@ -216,7 +269,15 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1">
-        {selectedArticle ? (
+        {isAdminOpen ? (
+          <NewsAdmin
+            onClose={() => {
+              setIsAdminOpen(false);
+              window.location.hash = '';
+            }}
+            onPublished={() => void refreshPublishedNews()}
+          />
+        ) : selectedArticle ? (
           /* View 1: Detailed Article Reading Screen */
           <ArticleDetailView
             article={selectedArticle}
@@ -241,6 +302,11 @@ export default function App() {
         ) : (
           /* View 3: Homepage Exact Layout from Image 1.png */
           <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 space-y-8">
+            {publishedNewsError && (
+              <p role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                {publishedNewsError}
+              </p>
+            )}
             {/* Search result indicator if search query is active */}
             {searchQuery && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs sm:text-sm text-amber-900 flex items-center justify-between">
@@ -329,9 +395,15 @@ export default function App() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onGoHome={() => {
+          setIsAdminOpen(false);
           setSelectedArticle(null);
           setActiveCategory('all');
           setSearchQuery('');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenAdmin={() => {
+          setIsAdminOpen(true);
+          window.location.hash = 'admin';
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
