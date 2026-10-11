@@ -83,7 +83,7 @@ async function fetchFeed(feed) {
       excerpt: cleanExcerpt(item.description ?? item.summary),
       image_url: imageFor(item),
       category_slug: categoryFor(item),
-      ...(Number.isNaN(publishedAt) ? {} : { published_at: new Date(publishedAt).toISOString() }),
+      published_at: Number.isNaN(publishedAt) ? null : new Date(publishedAt).toISOString(),
     }];
   });
 }
