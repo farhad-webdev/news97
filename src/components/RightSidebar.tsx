@@ -23,7 +23,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
   // Most read articles list
-  const mostReadArticles = [
+  const mostReadArticles = articles.slice(0, 5).map((article, index) => ({ id: article.id, rank: String(index + 1), title: article.title, time: article.publishedAt })); /* [
     {
       id: 'banasree-road-accident',
       rank: '১',
@@ -54,7 +54,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
       title: 'ঠাকুরগাঁও-১ আসনের উপনির্বাচনে ১১ দলীয় ঐক্যের নতুন কর্মসূচি ঘোষণা',
       time: '৬ ঘণ্টা আগে',
     },
-  ];
+  ]; */
 
   const handlePollVote = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,12 +74,12 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
 
   return (
     <aside className="space-y-6">
-      {/* 1. সর্বাধিক পঠিত (Most Read Widget) */}
+      {/* 1. সাম্প্রতিক প্রকাশিত সংবাদ (Most Read Widget) */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
         <div className="p-4 border-b border-slate-100 flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-red-600" />
           <h3 className="font-bold text-slate-900 text-base">
-            সর্বাধিক পঠিত
+            সাম্প্রতিক প্রকাশিত সংবাদ
           </h3>
         </div>
 
