@@ -258,14 +258,25 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         ))}
 
         {/* Highlight Callout Box */}
-        <div className="my-6 p-4 sm:p-5 bg-slate-50 border-l-4 border-slate-900 rounded-r-lg">
-          <p className="text-xs sm:text-sm font-semibold text-slate-900 italic">
-            "আইনের দৃষ্টিতে যেকোনো প্রাণীর চিকিৎসায় মানসম্মত প্রোটোকল মেনে চলা বাধ্যতামূলক। কোনো প্রতিষ্ঠানের অবহেলার কারণে রোগীর বা পোষ্য প্রাণীর ক্ষতি হলে তার দায় সংশ্লিষ্ট কর্তৃপক্ষকেই বহন করতে হবে।"
-          </p>
-          <span className="block text-right text-[11px] font-bold text-slate-500 mt-2">
-            — দেশবার্তা লিগ্যাল অ্যান্ড হিউম্যান রাইটস ডেস্ক
-          </span>
-        </div>
+        {article.sourceUrl ? (
+          <a
+            href={article.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700"
+          >
+            {article.author}–এর মূল সংবাদ পড়ুন
+          </a>
+        ) : (
+          <div className="my-6 p-4 sm:p-5 bg-slate-50 border-l-4 border-slate-900 rounded-r-lg">
+            <p className="text-xs sm:text-sm font-semibold text-slate-900 italic">
+              "আইনের দৃষ্টিতে যেকোনো প্রাণীর চিকিৎসায় মানসম্মত প্রোটোকল মেনে চলা বাধ্যতামূলক। কোনো প্রতিষ্ঠানের অবহেলার কারণে রোগীর বা পোষ্য প্রাণীর ক্ষতি হলে তার দায় সংশ্লিষ্ট কর্তৃপক্ষকেই বহন করতে হবে।"
+            </p>
+            <span className="block text-right text-[11px] font-bold text-slate-500 mt-2">
+              — দেশবার্তা লিগ্যাল অ্যান্ড হিউম্যান রাইটস ডেস্ক
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Tags Section */}

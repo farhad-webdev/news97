@@ -4,9 +4,10 @@ import { Facebook, Twitter, Youtube, Linkedin, Smartphone, ArrowUp } from 'lucid
 interface FooterProps {
   onCategoryClick: (categorySlug: string) => void;
   onGoHome: () => void;
+  onOpenAdmin: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onCategoryClick, onGoHome }) => {
+export const Footer: React.FC<FooterProps> = ({ onCategoryClick, onGoHome, onOpenAdmin }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -229,6 +230,13 @@ export const Footer: React.FC<FooterProps> = ({ onCategoryClick, onGoHome }) => 
           >
             <span>উপরে যান</span>
             <ArrowUp className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={onOpenAdmin}
+            className="text-slate-500 hover:text-white transition-colors"
+          >
+            Admin
           </button>
         </div>
       </div>
